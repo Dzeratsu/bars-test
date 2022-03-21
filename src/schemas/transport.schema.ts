@@ -11,20 +11,23 @@ export class Transport {
   @Prop()
   id: number;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  creatorId: User;
+  @Prop({ required: true })
+  creatorId: number;
 
-  @Prop()
+  @Prop({ required: true })
   name: string;
 
-  @Prop()
+  @Prop({ required: true })
   description: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }] })
-  unitID: Group;
+  @Prop()
+  unitID: number[];
 
   @Prop({ default: new Date() })
-  createdAt: string;
+  createdAt: Date;
+
+  @Prop()
+  deletedAt: Date;
 }
 
 export const TransportSchema = SchemaFactory.createForClass(Transport);

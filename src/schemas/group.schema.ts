@@ -1,31 +1,30 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { Transport } from './transport.schema';
-import { User } from '../schemas/user.schema';
 
 export type GroupDocument = Group & Document;
 
 @Schema()
 export class Group {
-  @Prop()
+  @Prop({ required: true })
   id: number;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  creatorId: User;
+  @Prop({ required: true })
+  creatorId: number;
 
-  @Prop()
+  @Prop({ required: true })
   name: string;
 
-  @Prop()
+  @Prop({ required: true })
   description: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Transport' }] })
-  unitId: Transport;
+  @Prop()
+  unitId: number[];
 
   @Prop({ default: new Date() })
-  createdAt: string;
+  createdAt: Date;
 
   @Prop()
-  updatedAt: string;
+  updatedAt: Date;
 }
 export const GroupSchema = SchemaFactory.createForClass(Group);

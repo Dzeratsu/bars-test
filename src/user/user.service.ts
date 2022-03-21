@@ -1,16 +1,17 @@
-import {HttpCode, Injectable, UnauthorizedException} from '@nestjs/common';
+import { HttpCode, Injectable, UnauthorizedException } from '@nestjs/common';
 import { userDto } from './dto/user';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
 import * as bcrypt from 'bcrypt';
-import { rejects } from 'assert';
+import { TransportService } from '../transport/transport.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<UserDocument>,
+    private transportService: TransportService,
   ) {}
 
   async regUser(userDto: userDto): Promise<User> {
@@ -50,6 +51,9 @@ export class UserService {
     const user = await this.userModel.findOneAndUpdate(
       { id: request.user.userId },
       { deletedAt: new Date() },
+    );
+    const delTransport = await this.transportService.deleteAllTransortuser(
+      request.user.userId,
     );
   }
 }

@@ -7,6 +7,7 @@ import { Transport, TransportSchema } from '../schemas/transport.schema';
 @Module({
   providers: [TransportService],
   controllers: [TransportController],
+  exports: [TransportService],
   imports: [
     MongooseModule.forFeature([
       { name: Transport.name, schema: TransportSchema },

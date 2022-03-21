@@ -8,7 +8,7 @@ export class User {
   @Prop()
   id: number;
 
-  @Prop()
+  @Prop({ required: true })
   name: string;
 
   @Prop()
@@ -18,13 +18,13 @@ export class User {
   lastLoginAt: string;
 
   @Prop({ default: new Date() })
-  createdAt: string;
+  createdAt: Date;
 
   @Prop()
-  updatedAt: string;
+  updatedAt: Date;
 
   @Prop()
-  deletedAt: string;
+  deletedAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
