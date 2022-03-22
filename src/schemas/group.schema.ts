@@ -26,5 +26,8 @@ export class Group {
 
   @Prop()
   updatedAt: Date;
+
+  @Prop()
+  deletedAt: Date;
 }
 export const GroupSchema = SchemaFactory.createForClass(Group);

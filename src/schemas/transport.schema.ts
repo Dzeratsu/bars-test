@@ -20,7 +20,7 @@ export class Transport {
   @Prop({ required: true })
   description: string;
 
-  @Prop()
+  @Prop({ default: new Set() })
   unitID: number[];
 
   @Prop({ default: new Date() })

@@ -1,4 +1,9 @@
-import { HttpCode, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpCode,
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { userDto } from './dto/user';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -17,6 +22,10 @@ export class UserService {
   async regUser(userDto: userDto): Promise<User> {
     const newUser = new this.userModel(userDto);
     const lastId = await this.userModel.find().limit(1).sort({ id: -1 });
+    const findUserName = await this.userModel.find({ name: userDto.name });
+    if (findUserName) {
+      throw new ConflictException('Пользователь с таким именем уже существует');
+    }
     if (lastId[0] == undefined) {
       newUser.id = 1;
     } else {
@@ -42,7 +51,6 @@ export class UserService {
         throw new UnauthorizedException('Не правильный пароль');
       }
     } else {
-      console.log('произошел else');
       throw new UnauthorizedException('Такого пользователя не существует');
     }
   }

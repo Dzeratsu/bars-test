@@ -20,13 +20,17 @@ export class TransportService {
     }
     return newID;
   }
+  async Transport(req) {
+    const transport = await this.transportModel.find({ creatorId: req.user.userId });
+    return transport;
+  }
   async addTransport(req, transportDto) {
     const object: TransportInterface = {
       id: await this.assignID(),
       creatorId: req.user.userId,
       name: transportDto.name,
       description: transportDto.description,
-      unitID: transportDto.unitId,
+      unitID: transportDto.unitID,
       createdAt: new Date(),
     };
     const transportObject = new this.transportModel(object);
@@ -37,6 +41,23 @@ export class TransportService {
       throw new BadRequestException(e);
     }
   }
+  async addTransportGroup(id, params) {
+    const addGroup = await this.transportModel.findOneAndUpdate(
+      { id: params.id },
+      { $addToSet: { unitID: id.unitID } },
+    );
+    return addGroup;
+  }
+  /*Переделать не работает
+  async deleteOneUnitId(id) {
+    const transort = await this.transportModel.updateMany(
+      {
+        unitID: { $in: [id] },
+      },
+      { unitID: { $pull: [id] } },
+    );
+    return transort;
+  }*/
   async deleteTransport(param, req) {
     const transp = await this.transportModel.findOneAndUpdate(
       { id: param.id, creatorId: req.user.userId },

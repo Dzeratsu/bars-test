@@ -20,6 +20,17 @@ export class TsgroupService {
     }
     return newID;
   }
+  async getAllGroup(req) {
+    const proj = { id: 1, name: 1, description: 1, unitID: 1, _id: 0 };
+    const allGroup = await this.groupModel.find(
+      {
+        creatorId: req.user.userId,
+        deletedAt: { $exists: false },
+      },
+      proj,
+    );
+    return allGroup;
+  }
   async addGroup(req, groupDto) {
     const object: GroupInterface = {
       id: await this.assignID(),
@@ -31,5 +42,12 @@ export class TsgroupService {
     };
     const newGroup = new this.groupModel(object);
     return newGroup.save();
+  }
+  async deleteGroup(params) {
+    const del = await this.groupModel.findOneAndUpdate(
+      { id: params.id },
+      { deletedAt: new Date() },
+    );
+    return del;
   }
 }
