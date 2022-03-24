@@ -21,7 +21,9 @@ export class TransportService {
     return newID;
   }
   async Transport(req) {
-    const transport = await this.transportModel.find({ creatorId: req.user.userId });
+    const transport = await this.transportModel.find({
+      creatorId: req.user.userId,
+    });
     return transport;
   }
   async addTransport(req, transportDto) {
@@ -69,11 +71,11 @@ export class TransportService {
       return transp;
     }
   }
-  async deleteAllTransortuser(userID: number) {
+  async deleteAllTransortuser(userID: number): Promise<string> {
     const allUserTransp = await this.transportModel.updateMany(
       { creatorId: userID },
       { deletedAt: new Date() },
     );
-    return;
+    return 'succses';
   }
 }

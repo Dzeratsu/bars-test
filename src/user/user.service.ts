@@ -23,7 +23,7 @@ export class UserService {
     const newUser = new this.userModel(userDto);
     const lastId = await this.userModel.find().limit(1).sort({ id: -1 });
     const findUserName = await this.userModel.find({ name: userDto.name });
-    if (findUserName) {
+    if (findUserName[0] !== undefined) {
       throw new ConflictException('Пользователь с таким именем уже существует');
     }
     if (lastId[0] == undefined) {
@@ -55,7 +55,7 @@ export class UserService {
     }
   }
 
-  async delUser(request) {
+  async delUser(request): Promise<any> {
     const user = await this.userModel.findOneAndUpdate(
       { id: request.user.userId },
       { deletedAt: new Date() },
