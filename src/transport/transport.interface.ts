@@ -3,6 +3,6 @@ export interface TransportInterface {
   creatorId: number;
   name: string;
   description: string;
-  unitID?: string;
+  unitID?: number[];
   createdAt: Date;
 }

@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Transport, TransportDocument } from '../schemas/transport.schema';
-import { TransportInterface } from './transport.interface';
+import { TransportInterface } from "./transport.interface";
 
 @Injectable()
 export class TransportService {
@@ -20,10 +20,14 @@ export class TransportService {
     }
     return newID;
   }
-  async Transport(req) {
-    const transport = await this.transportModel.find({
-      creatorId: req.user.userId,
-    });
+  async transport(req) {
+    const proj = { id: 1, name: 1, description: 1, unitID: 1, createdAt: 1, _id: 0 };
+    const transport = await this.transportModel.find(
+      {
+        creatorId: req.user.userId,
+      },
+      proj,
+    );
     return transport;
   }
   async addTransport(req, transportDto) {
@@ -38,7 +42,7 @@ export class TransportService {
     const transportObject = new this.transportModel(object);
     const sav = await transportObject.save();
     try {
-      return 'sucsses';
+      return sav;
     } catch (e) {
       throw new BadRequestException(e);
     }

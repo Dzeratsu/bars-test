@@ -34,6 +34,6 @@ export class TransportController {
   @UseGuards(JwtAuthGuard)
   @Get()
   allTransport(@Req() req) {
-    return this.transpotService.Transport(req);
+    return this.transpotService.transport(req);
   }
 }

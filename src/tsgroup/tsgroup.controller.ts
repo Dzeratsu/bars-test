@@ -5,6 +5,7 @@ import {
   UseGuards,
   Req,
   Get,
+  Put,
   Param,
   Delete,
 } from '@nestjs/common';
@@ -27,8 +28,13 @@ export class TsgroupController {
     return this.TsgroupService.addGroup(req, groupDto);
   }
   @UseGuards(JwtAuthGuard)
+  @Put('/edit/:id')
+  edit(@Param() params, @Body() groupDto: groupDto) {
+    return this.TsgroupService.editGroup(params.id, groupDto);
+  }
+  @UseGuards(JwtAuthGuard)
   @Delete('/del/:id')
   delGroup(@Param() params) {
-    return this.TsgroupService.deleteGroup(params);
+    return this.TsgroupService.deleteGroup(params.id);
   }
 }

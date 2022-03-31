@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Group, GroupDocument } from '../schemas/group.schema';
@@ -10,6 +10,7 @@ export class TsgroupService {
     @InjectModel(Group.name)
     private groupModel: Model<GroupDocument>,
   ) {}
+
   async assignID(): Promise<number> {
     let newID: number;
     const lastId = await this.groupModel.find().limit(1).sort({ id: -1 });
@@ -20,8 +21,9 @@ export class TsgroupService {
     }
     return newID;
   }
+
   async getAllGroup(req) {
-    const proj = { id: 1, name: 1, description: 1, unitID: 1, _id: 0 };
+    const proj = { id: 1, name: 1, description: 1, unitId: 1, _id: 0 };
     const allGroup = await this.groupModel.find(
       {
         creatorId: req.user.userId,
@@ -31,6 +33,7 @@ export class TsgroupService {
     );
     return allGroup;
   }
+
   async addGroup(req, groupDto) {
     const object: GroupInterface = {
       id: await this.assignID(),
@@ -43,6 +46,16 @@ export class TsgroupService {
     const newGroup = new this.groupModel(object);
     return newGroup.save();
   }
+
+  async editGroup(params: number, groupDto) {
+    const group = await this.groupModel.findOneAndUpdate(
+      { id: params },
+      { name: groupDto.name, description: groupDto.description },
+      { new: true },
+    );
+    return group;
+  }
+
   async deleteGroup(params) {
     const del = await this.groupModel.findOneAndUpdate(
       { id: params.id },
