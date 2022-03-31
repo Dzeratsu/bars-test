@@ -23,7 +23,7 @@ export class TsgroupService {
   }
 
   async getAllGroup(req) {
-    const proj = { id: 1, name: 1, description: 1, unitId: 1, _id: 0 };
+    const proj = { id: 1, name: 1, description: 1, unitID: 1, _id: 0 };
     const allGroup = await this.groupModel.find(
       {
         creatorId: req.user.userId,
@@ -33,7 +33,14 @@ export class TsgroupService {
     );
     return allGroup;
   }
-
+  async editGroup(params: number, groupDto) {
+    const group = await this.groupModel.findOneAndUpdate(
+      { id: params },
+      { name: groupDto.name, description: groupDto.description },
+      { new: true },
+    );
+    return group;
+  }
   async addGroup(req, groupDto) {
     const object: GroupInterface = {
       id: await this.assignID(),
@@ -44,16 +51,8 @@ export class TsgroupService {
       createdAt: new Date(),
     };
     const newGroup = new this.groupModel(object);
-    return newGroup.save();
-  }
-
-  async editGroup(params: number, groupDto) {
-    const group = await this.groupModel.findOneAndUpdate(
-      { id: params },
-      { name: groupDto.name, description: groupDto.description },
-      { new: true },
-    );
-    return group;
+    newGroup.save();
+    return { id: newGroup.id };
   }
 
   async deleteGroup(params) {
@@ -61,6 +60,10 @@ export class TsgroupService {
       { id: params.id },
       { deletedAt: new Date() },
     );
-    return del;
+    if (!del) {
+      throw new BadRequestException();
+    } else {
+      return del;
+    }
   }
 }

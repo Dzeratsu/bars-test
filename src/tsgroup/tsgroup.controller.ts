@@ -8,6 +8,7 @@ import {
   Put,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { TsgroupService } from './tsgroup.service';
 import { groupDto } from './dto/groupDto';

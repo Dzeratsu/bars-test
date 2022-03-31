@@ -6,6 +6,7 @@ import {
   Body,
   Delete,
   Param,
+  Put,
   Get,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -26,6 +27,7 @@ export class TransportController {
   add(@Body() unitID: number, @Param() params) {
     return this.transpotService.addTransportGroup(unitID, params);
   }
+
   @UseGuards(JwtAuthGuard)
   @Delete('/del/:id')
   delTransport(@Param() params, @Req() req) {
