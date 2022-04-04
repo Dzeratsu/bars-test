@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Transport, TransportDocument } from '../schemas/transport.schema';
-import { TransportInterface } from "./transport.interface";
+import { TransportInterface } from './transport.interface';
 
 @Injectable()
 export class TransportService {
@@ -10,6 +10,7 @@ export class TransportService {
     @InjectModel(Transport.name)
     private transportModel: Model<TransportDocument>,
   ) {}
+
   async assignID(): Promise<number> {
     let newID: number;
     const lastId = await this.transportModel.find().limit(1).sort({ id: -1 });
@@ -20,8 +21,16 @@ export class TransportService {
     }
     return newID;
   }
+
   async transport(req) {
-    const proj = { id: 1, name: 1, description: 1, unitID: 1, createdAt: 1, _id: 0 };
+    const proj = {
+      id: 1,
+      name: 1,
+      description: 1,
+      unitID: 1,
+      createdAt: 1,
+      _id: 0,
+    };
     const transport = await this.transportModel.find(
       {
         creatorId: req.user.userId,
@@ -30,6 +39,7 @@ export class TransportService {
     );
     return transport;
   }
+
   async addTransport(req, transportDto) {
     const object: TransportInterface = {
       id: await this.assignID(),
@@ -47,6 +57,7 @@ export class TransportService {
       throw new BadRequestException(e);
     }
   }
+
   async addTransportGroup(id, params) {
     const addGroup = await this.transportModel.findOneAndUpdate(
       { id: params.id },
@@ -54,6 +65,7 @@ export class TransportService {
     );
     return addGroup;
   }
+
   /*Переделать не работает
   async deleteOneUnitId(id) {
     const transort = await this.transportModel.updateMany(
@@ -75,11 +87,28 @@ export class TransportService {
       return transp;
     }
   }
+
   async deleteAllTransortuser(userID: number): Promise<string> {
     const allUserTransp = await this.transportModel.updateMany(
       { creatorId: userID },
       { deletedAt: new Date() },
     );
     return 'succses';
+  }
+
+  async getOneTransport(params) {
+    const proj = {
+      id: 1,
+      name: 1,
+      description: 1,
+      unitID: 1,
+      createdAt: 1,
+      _id: 0,
+    };
+    const transport = await this.transportModel.findOne(
+      { id: params.id },
+      proj,
+    );
+    return transport
   }
 }

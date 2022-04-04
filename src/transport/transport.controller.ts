@@ -36,4 +36,9 @@ export class TransportController {
   allTransport(@Req() req) {
     return this.transpotService.transport(req);
   }
+  @UseGuards(JwtAuthGuard)
+  @Get('/:id')
+  oneTS(@Param() params) {
+    return this.transpotService.getOneTransport(params);
+  }
 }
