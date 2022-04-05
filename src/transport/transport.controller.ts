@@ -15,17 +15,19 @@ import { TransportService } from './transport.service';
 
 @Controller('transport')
 export class TransportController {
-  constructor(private readonly transpotService: TransportService) {}
+  constructor(private readonly transpotService: TransportService) {
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post('/add')
   addTransport(@Req() req, @Body() transportDto: transportDto) {
     return this.transpotService.addTransport(req, transportDto);
   }
+
   @UseGuards(JwtAuthGuard)
-  @Post('/addGroup/:id')
-  add(@Body() unitID: number, @Param() params) {
-    return this.transpotService.addTransportGroup(unitID, params);
+  @Put('/edit/:id')
+  editTs(@Param() param, @Body() transportDto: transportDto) {
+    return this.transpotService.editTransport(param.id, transportDto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -33,14 +35,22 @@ export class TransportController {
   delTransport(@Param() params, @Req() req) {
     return this.transpotService.deleteTransport(params, req);
   }
+
   @UseGuards(JwtAuthGuard)
   @Get()
   allTransport(@Req() req) {
     return this.transpotService.transport(req);
   }
+
   @UseGuards(JwtAuthGuard)
   @Get('/:id')
   oneTS(@Param() params) {
-    return this.transpotService.getOneTransport(params);
+    return this.transpotService.getOneTransport(params.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/delGroup/:id')
+  delGroupTs(@Param() params, @Body() id) {
+    return this.transpotService.delGroup(params.id, id);
   }
 }

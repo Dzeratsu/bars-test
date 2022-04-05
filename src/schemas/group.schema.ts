@@ -18,8 +18,8 @@ export class Group {
   @Prop({ required: true })
   description: string;
 
-  @Prop()
-  unitId: number[];
+  @Prop({ default: [] })
+  unitID: number[];
 
   @Prop({ default: new Date() })
   createdAt: Date;

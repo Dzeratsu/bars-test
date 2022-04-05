@@ -10,5 +10,6 @@ import { TsgroupController } from './tsgroup.controller';
   imports: [
     MongooseModule.forFeature([{ name: Group.name, schema: GroupSchema }]),
   ],
+  exports: [TsgroupService],
 })
 export class TsgroupModule {}

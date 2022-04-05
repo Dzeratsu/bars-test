@@ -5,7 +5,6 @@ import {
   UseGuards,
   Req,
   Get,
-  Put,
   Param,
   Delete,
   Put,
