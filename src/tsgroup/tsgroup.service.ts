@@ -9,8 +9,7 @@ export class TsgroupService {
   constructor(
     @InjectModel(Group.name)
     private groupModel: Model<GroupDocument>,
-  ) {
-  }
+  ) {}
 
   async assignID(): Promise<number> {
     let newID: number;
@@ -83,24 +82,21 @@ export class TsgroupService {
     }
   }
 
-  async delID(idTS: number, arr: number[]) {
-    console.log(arr);
-    for (let i = 0; i < arr.length; i++) {
-      const group = await this.groupModel.find({ id: arr[i] });
-      if (group[0].unitID.length == 0) {
-        const updateGroup = await this.groupModel.updateMany(
-          { id: { $gte: 0 } },
-          { unitID: [] },
-          { new: true },
-        );
-      } else {
-        const index = group[0].unitID.indexOf(idTS);
-        const updateGroup = await this.groupModel.findOneAndUpdate(
-          { id: arr[i] },
-          { unitID: group[0].unitID.splice(index, 0) },
-          { new: true },
-        );
-      }
+  async delID(idTS: number, groupID) {
+    const group = await this.groupModel.find({ id: groupID });
+    if (group[0].unitID.length > 1) {
+      const index = group[0].unitID.indexOf(idTS);
+      const edit = await this.groupModel.findOneAndUpdate(
+        { id: groupID },
+        { unitID: group[0].unitID.splice(index, 1) },
+        { new: true },
+      );
+    } else {
+      const edit = await this.groupModel.findOneAndUpdate(
+        { id: groupID },
+        { unitID: [] },
+        { new: true },
+      );
     }
   }
 }

@@ -1,17 +1,18 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Transport, TransportDocument } from '../schemas/transport.schema';
-import { TransportInterface } from './transport.interface';
-import { TsgroupService } from '../tsgroup/tsgroup.service';
+import { Injectable, BadRequestException } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { Transport, TransportDocument } from "../schemas/transport.schema";
+import { TransportInterface } from "./transport.interface";
+import { TsgroupService } from "../tsgroup/tsgroup.service";
 
 @Injectable()
 export class TransportService {
   constructor(
     @InjectModel(Transport.name)
     private transportModel: Model<TransportDocument>,
-    private groupService: TsgroupService,
-  ) {}
+    private groupService: TsgroupService
+  ) {
+  }
 
   async assignID(): Promise<number> {
     let newID: number;
@@ -31,14 +32,14 @@ export class TransportService {
       description: 1,
       unitID: 1,
       createdAt: 1,
-      _id: 0,
+      _id: 0
     };
     const transport = await this.transportModel.find(
       {
         creatorId: req.user.userId,
-        deletedAt: { $exists: false },
+        deletedAt: { $exists: false }
       },
-      proj,
+      proj
     );
     return transport;
   }
@@ -50,7 +51,7 @@ export class TransportService {
       name: transportDto.name,
       description: transportDto.description,
       unitID: transportDto.unitID,
-      createdAt: new Date(),
+      createdAt: new Date()
     };
     const transportObject = new this.transportModel(object);
     const sav = await transportObject.save();
@@ -59,7 +60,7 @@ export class TransportService {
         for (let i = 0; i < sav.unitID.length; i++) {
           const addId = await this.groupService.editUnitIDGroup(
             transportDto.unitID[i],
-            sav.id,
+            sav.id
           );
         }
       }
@@ -73,10 +74,8 @@ export class TransportService {
     const delArr: number[] = [];
     const ts = await this.transportModel.find({ id: idTS });
     if (ts[0].unitID) {
-      for (let i = 0; i < transportDto.unitID.length; i++) {
-        if (!transportDto.unitID.includes(ts[0].unitID[i])) {
-          delArr.push(ts[0].unitID[i]);
-        }
+      for (let i = 0; i < ts[0].unitID.length; i++) {
+        this.groupService.delID(idTS, ts[0].unitID[i]);
       }
     }
     const transport = await this.transportModel.findOneAndUpdate(
@@ -84,17 +83,16 @@ export class TransportService {
       {
         name: transportDto.name,
         description: transportDto.description,
-        unitID: transportDto.unitID,
+        unitID: transportDto.unitID
       },
-      { new: true },
+      { new: true }
     );
-    this.groupService.delID(transport.id, delArr);
     try {
       if (transportDto.unitID !== []) {
         for (let i = 0; i < transport.unitID.length; i++) {
           const addId = await this.groupService.editUnitIDGroup(
             transportDto.unitID[i],
-            transport.id,
+            transport.id
           );
         }
       }
@@ -108,10 +106,10 @@ export class TransportService {
     const transp = await this.transportModel.findOneAndUpdate(
       { id: param.id, creatorId: req.user.userId },
       { deletedAt: new Date() },
-      { new: true },
+      { new: true }
     );
     if (transp == undefined) {
-      throw new BadRequestException('Транспортное средство не найдено');
+      throw new BadRequestException("Транспортное средство не найдено");
     } else {
       return transp;
     }
@@ -120,9 +118,9 @@ export class TransportService {
   async deleteAllTransortuser(userID: number): Promise<string> {
     const allUserTransp = await this.transportModel.updateMany(
       { creatorId: userID },
-      { deletedAt: new Date() },
+      { deletedAt: new Date() }
     );
-    return 'succses';
+    return "succses";
   }
 
   async getOneTransport(params: number) {
@@ -132,7 +130,7 @@ export class TransportService {
       description: 1,
       unitID: 1,
       createdAt: 1,
-      _id: 0,
+      _id: 0
     };
     const transport = await this.transportModel.findOne({ id: params }, proj);
     return transport;
@@ -141,7 +139,7 @@ export class TransportService {
   async delGroup(params: number, id: number[]) {
     console.log(id);
     if (id.length == 0) {
-      throw new BadRequestException('Прислан пустой массив');
+      throw new BadRequestException("Прислан пустой массив");
     }
     for (let i = 0; i < id.length; i++) {
       const ts = await this.transportModel.find({ id: id[i] });
@@ -149,7 +147,7 @@ export class TransportService {
       const updateTs = await this.transportModel.findOneAndUpdate(
         { id: id[i] },
         { unitID: ts[0].unitID.splice(index, 1) },
-        { new: true },
+        { new: true }
       );
     }
   }
